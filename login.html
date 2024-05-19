@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="login.css">
+     <!-- Load AWS SDK -->
+     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1623.0.min.js"></script>
+     <!-- Load Amazon Cognito Identity SDK -->
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/amazon-cognito-identity-js/4.5.10/amazon-cognito-identity.min.js"></script>
+     <script>
+         // AWS Configuration
+         AWS.config.region = 'us-east-1'; // Replace 'us-east-1' with your AWS region
+         AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+             IdentityPoolId: 'us-east-1:53624a4b-cad7-42d1-8260-0e02425635cf' // Replace with your Cognito Identity Pool ID
+         });
+ 
+         // Cognito User Pool Configuration
+         var poolData = {
+             UserPoolId: 'us-east-1_JzvxgJtz2', // Replace with your Cognito User Pool ID
+             ClientId: '1k138154jm1rtuqkm4n03l7nie' // Replace with your Cognito Client ID
+         };
+         var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+     </script>
+    
+
+</head>
+<body>
+    <div class="container">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+            
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            
+            <button type="submit">Login</button>
+        </form>
+        <p>Don't have an account? <a href="signup.html">Sign up</a></p>
+    </div>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+
+            var authenticationData = {
+                Username: username,
+                Password: password,
+            };
+            var authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
+
+            var userData = {
+                Username: username,
+                Pool: userPool
+            };
+            var cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+            cognitoUser.authenticateUser(authenticationDetails, {
+                onSuccess: function (result) {
+                    console.log('Login successful!');
+                    // Redirect or handle successful authentication
+                },
+                onFailure: function(err) {
+                    alert(err.message || JSON.stringify(err));
+                }
+            });
+        });
+    </script>
+</body>
+</html>

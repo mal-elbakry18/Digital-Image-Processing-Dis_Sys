@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Image</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Upload Image</h2>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <label for="image">Choose an image:</label>
+            <input type="file" id="image" name="image" accept="image/*" required>
+            
+            <label for="operation">Choose an operation:</label>
+            <select id="operation" name="operation" required>
+                <option value="edge_detection">Edge Detection</option>
+                <option value="color_inversion">Color Inversion</option>
+                <!-- Add more operations as needed -->
+            </select>
+            
+            <button type="submit">Upload</button>
+        </form>
+    </div>
+</body>
+</html>

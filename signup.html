@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="login.css">
+   <!-- Load AWS SDK -->
+<script src="https://sdk.amazonaws.com/js/aws-sdk-2.283.1.min.js"></script>
+<!-- Load Amazon Cognito Identity SDK -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/amazon-cognito-identity-js/4.5.10/amazon-cognito-identity.min.js"></script>
+
+    <script>
+        // AWS Configuration
+        AWS.config.region = 'us-east-1'; // Replace 'us-east-1' with your AWS region
+        AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+            IdentityPoolId: 'us-east-1:53624a4b-cad7-42d1-8260-0e02425635cf' // Replace with your Cognito Identity Pool ID
+        });
+
+        // Cognito User Pool Configuration
+        var poolData = {
+            UserPoolId: 'us-east-1_JzvxgJtz2', // Replace with your Cognito User Pool ID
+            ClientId: '1k138154jm1rtuqkm4n03l7nie' // Replace with your Cognito Client ID
+        };
+        var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>Sign Up</h2>
+        <form id="signupForm">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+            
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            
+            <label for="birthdate">Birthdate:</label>
+            <input type="date" id="birthdate" name="birthdate" required>
+            
+            <label for="gender">Gender:</label>
+            <select id="gender" name="gender" required>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+            </select>
+            
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            
+            <label for="confirmPassword">Confirm Password:</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" required>
+            
+            <button type="submit">Sign Up</button>
+        </form>
+        <p>Already have an account? <a href="login.html">Login</a></p>
+    </div>
+    <!-- JavaScript for handling signup -->
+    <script>
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var username = document.getElementById('username').value;
+            var email = document.getElementById('email').value;
+            var birthdate = document.getElementById('birthdate').value;
+            var gender = document.getElementById('gender').value;
+            var password = document.getElementById('password').value;
+            var confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (password !== confirmPassword) {
+                alert('Passwords do not match!');
+                return;
+            }
+
+            var attributeList = [];
+            var dataEmail = {
+                Name: 'email',
+                Value: email
+            };
+            var attributeEmail = new AmazonCognitoIdentity.CognitoUserAttribute(dataEmail);
+
+            var dataBirthdate = {
+                Name: 'birthdate',
+                Value: birthdate
+            };
+            var attributeBirthdate = new AmazonCognitoIdentity.CognitoUserAttribute(dataBirthdate);
+
+            var dataGender = {
+                Name: 'gender',
+                Value: gender
+            };
+            var attributeGender = new AmazonCognitoIdentity.CognitoUserAttribute(dataGender);
+
+            attributeList.push(attributeEmail);
+            attributeList.push(attributeBirthdate);
+            attributeList.push(attributeGender);
+
+            userPool.signUp(username, password, attributeList, null, function(err, result) {
+                if (err) {
+                    alert(err.message || JSON.stringify(err));
+                    return;
+                }
+                var cognitoUser = result.user;
+                console.log('User registration successful:', cognitoUser.getUsername());
+                alert('User registration successful!');
+                // Redirect or handle successful signup
+            });
+        });
+    </script>
+</body>
+</html>
